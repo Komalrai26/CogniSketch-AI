@@ -169,20 +169,26 @@ if trigger_mic:
     recognizer = sr.Recognizer()
     
    # --- CLOUD-COMPATIBLE VOICE CAPTURE ---
-trigger_mic = st.button("🎙️ INITIALIZE VOICE-TO-IMAGE CAPTURE")
-
-if trigger_mic:
-    import os
-    # Check if we are in the Streamlit Cloud environment
-    if "STREAMLIT_SERVER_PORT" in os.environ:
-        st.info("🎙️ Note: Hardware voice capture is disabled in the cloud. Please use text input.")
-    else:
-        # Only attempt hardware access if running locally
-        try:
-            with sr.Microphone() as source:
-                # ... [your existing microphone processing code]
-        except Exception as e:
-            st.error(f"⚠️ Audio system error: {e}")
+    if trigger_mic:
+        import os
+        # Check if we are in the Streamlit Cloud environment
+        if "STREAMLIT_SERVER_PORT" in os.environ:
+            st.info("🎙️ Note: Hardware voice capture is disabled in the cloud. Please use text input.")
+        else:
+            # Only attempt hardware access if running locally
+            try:
+                import speech_recognition as sr
+                recognizer = sr.Recognizer()
+                with sr.Microphone() as source:
+                    st.session_state.voice_telemetry = "🔴 LISTENING..."
+                    recognizer.adjust_for_ambient_noise(source, duration=0.5)
+                    audio = recognizer.listen(source, timeout=5)
+                    st.session_state.voice_telemetry = "⚙️ Transcribing..."
+                    text = recognizer.recognize_google(audio)
+                    st.session_state.prompt_context_buffer = text
+                    st.session_state.voice_telemetry = "🟢 SUCCESS"
+            except Exception as e:
+                st.error(f"⚠️ Audio system error: {e}")
 
 st.markdown(f'<div style="margin-top:12px; font-family:monospace; font-size:0.92rem; color:#38bdf8;">{st.session_state.voice_telemetry}</div>', unsafe_allow_html=True)
 st.markdown('</div>', unsafe_allow_html=True)
