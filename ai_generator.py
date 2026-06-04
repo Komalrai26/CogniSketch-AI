@@ -1,7 +1,6 @@
 import streamlit as st
 from PIL import Image
 from io import BytesIO
-import speech_recognition as sr
 from api_handler import generate_ai_image
 
 # ==============================================================================
