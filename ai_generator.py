@@ -173,19 +173,24 @@ if trigger_mic:
     recognizer.pause_threshold = 1.8  
     recognizer.non_speaking_duration = 0.8  
     
-    with sr.Microphone() as source:
-        try:
-            recognizer.adjust_for_ambient_noise(source, duration=0.5)
-            audio_stream = recognizer.listen(source, timeout=5, phrase_time_limit=10)
-            st.session_state.voice_telemetry = "⚙️ Transcribing vector paths directly through NLP array node..."
-            
-            # Decode audio packets via Google Speech Core API
-            transcribed_text = recognizer.recognize_google(audio_stream)
-            st.session_state.prompt_context_buffer = transcribed_text
-            st.session_state.voice_telemetry = "🟢 SPEECH PACKET LOGGED SUCCESSFUL // INITIATING PRODUCTION PIPELINE"
-            auto_fire_pipeline = True
-        except Exception as system_fault:
-            st.session_state.voice_telemetry = f"❌ MICROPHONE EXCEPTION BOUNDARY FAULT: Check audio input source configurations."
+     # --- SAFE HARDWARE-AWARE VOICE CAPTURE ---
+    try:
+        import os
+        # Check if running in a cloud environment
+        if os.environ.get("STREAMLIT_SERVER_PORT") or os.environ.get("CLOUD_ENV"):
+            st.warning("🎙️ Hardware microphone access is restricted in the cloud. Please use the text input area.")
+        else:
+            # Only run microphone code if we are local
+            with sr.Microphone() as source:
+                recognizer.adjust_for_ambient_noise(source, duration=0.5)
+                audio_stream = recognizer.listen(source, timeout=5, phrase_time_limit=10)
+                st.session_state.voice_telemetry = "⚙️ Transcribing..."
+                transcribed_text = recognizer.recognize_google(audio_stream)
+                st.session_state.prompt_context_buffer = transcribed_text
+                st.session_state.voice_telemetry = "🟢 SUCCESS"
+                auto_fire_pipeline = True
+    except Exception as e:
+        st.error(f"⚠️ Audio system unavailable: {e}")
 
 st.markdown(f'<div style="margin-top:12px; font-family:monospace; font-size:0.92rem; color:#38bdf8;">{st.session_state.voice_telemetry}</div>', unsafe_allow_html=True)
 st.markdown('</div>', unsafe_allow_html=True)
