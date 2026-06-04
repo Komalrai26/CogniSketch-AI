@@ -163,18 +163,14 @@ st.markdown('</div>', unsafe_allow_html=True)
 
 # Hardware listening processing state logic
 auto_fire_pipeline = False
-#if trigger_mic:
-    #st.session_state.voice_telemetry = "🔴 INITIALIZING AUDIO STREAM... Speak your prompt parameters clearly now."
-    #recognizer = sr.Recognizer()
-    
 # --- CLOUD-SAFE VOICE CAPTURE ---
     if trigger_mic:
         import os
-        # 1. Detect environment
+        # 1. Detect if we are in the cloud (where no mic exists)
         if "STREAMLIT_SERVER_PORT" in os.environ:
             st.info("🎙️ Hardware microphone access is restricted in the cloud.")
         else:
-            # 2. Only run hardware-dependent code on your local machine
+            # 2. Only import and use hardware libraries on your local machine
             try:
                 import speech_recognition as sr
                 recognizer = sr.Recognizer()
@@ -188,7 +184,7 @@ auto_fire_pipeline = False
                     st.session_state.voice_telemetry = "🟢 SUCCESS"
                     auto_fire_pipeline = True
             except Exception as e:
-                st.error(f"⚠️ Audio system error: {e}") 
+                st.error(f"⚠️ Audio system error: {e}")
                 
 st.markdown(f'<div style="margin-top:12px; font-family:monospace; font-size:0.92rem; color:#38bdf8;">{st.session_state.voice_telemetry}</div>', unsafe_allow_html=True)
 st.markdown('</div>', unsafe_allow_html=True)
