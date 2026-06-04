@@ -163,9 +163,9 @@ st.markdown('</div>', unsafe_allow_html=True)
 
 # Hardware listening processing state logic
 auto_fire_pipeline = False
-if trigger_mic:
-    st.session_state.voice_telemetry = "🔴 INITIALIZING AUDIO STREAM... Speak your prompt parameters clearly now."
-    recognizer = sr.Recognizer()
+#if trigger_mic:
+    #st.session_state.voice_telemetry = "🔴 INITIALIZING AUDIO STREAM... Speak your prompt parameters clearly now."
+    #recognizer = sr.Recognizer()
     
    # --- CLOUD-SAFE VOICE CAPTURE ---
     if trigger_mic:
