@@ -164,7 +164,7 @@ st.markdown('</div>', unsafe_allow_html=True)
 # Hardware listening processing state logic
 auto_fire_pipeline = False
 # --- CLOUD-SAFE VOICE CAPTURE ---
-    if trigger_mic:
+if trigger_mic:
         import os
         # 1. Detect if we are in the cloud (where no mic exists)
         if "STREAMLIT_SERVER_PORT" in os.environ:
