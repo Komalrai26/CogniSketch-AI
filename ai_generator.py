@@ -171,11 +171,11 @@ if trigger_mic:
    # --- CLOUD-COMPATIBLE VOICE CAPTURE ---
     if trigger_mic:
         import os
-        # Check if we are in the Streamlit Cloud environment
+        # 1. Detect if we are in the cloud (where no mic exists)
         if "STREAMLIT_SERVER_PORT" in os.environ:
-            st.info("🎙️ Note: Hardware voice capture is disabled in the cloud. Please use text input.")
+            st.info("🎙️ Hardware microphone access is restricted in the cloud.")
         else:
-            # Only attempt hardware access if running locally
+            # 2. Only run this block if on your local machine
             try:
                 import speech_recognition as sr
                 recognizer = sr.Recognizer()
@@ -188,7 +188,7 @@ if trigger_mic:
                     st.session_state.prompt_context_buffer = text
                     st.session_state.voice_telemetry = "🟢 SUCCESS"
             except Exception as e:
-                st.error(f"⚠️ Audio system error: {e}")
+                st.error(f"⚠️ Audio error: {e}")
 
 st.markdown(f'<div style="margin-top:12px; font-family:monospace; font-size:0.92rem; color:#38bdf8;">{st.session_state.voice_telemetry}</div>', unsafe_allow_html=True)
 st.markdown('</div>', unsafe_allow_html=True)
